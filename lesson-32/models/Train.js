@@ -9,6 +9,7 @@ const mongoose = require("mongoose"),
       required: true,
       unique: true,
       trim: true,
+      default: 'Untitled' 
     },
     description: {
       type: String,

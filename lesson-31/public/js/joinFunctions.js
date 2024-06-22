@@ -1,3 +1,4 @@
+
 // public/js/modal.js
 "use strict";
 
@@ -10,6 +11,36 @@ $(document).ready(() => {
    * Listing 30.5 (p. 445)
    * socket.io를 취한 클라이언트 측 JavaScript 추가
    */
+  const socket = io();
+
+  $("#chat-form").submit(() => {
+    let text = $("#chat-input").val();
+    let userId = $("#chat-user-id").val();
+    let userFullName = $("#chat-user-full-name").val();
+    let username = $("#chat-username").val();
+    socket.emit("message", {
+      content: text,
+      userId: userId,
+      fullName: userFullName,
+      username: username,
+    });
+    $("#chat-input").val("");
+    return false;
+  });
+
+  /**
+   * Listing 31.12 (p. 460)
+   * 최근 메시지 표시
+   */
+  socket.on("load all messages", data => {
+    data.forEach(msg => {
+      displayMessage(msg);
+    });
+  });
+
+  socket.on("message", (message) => {
+    displayMessage(message);
+  });
 
   $("#modal-button").click(() => {
     $(".modal-body").html("");
@@ -113,4 +144,24 @@ let addJoinButtonListener = () => {
       }
     );
   });
+};
+
+/**
+ * Listing 31.6 (p. 454)
+ * 채팅 폼으로부터 hidden field 값 끌어오기
+ */
+
+let displayMessage = (message) => {
+  $("#chat").prepend(
+    $("<li>").html(
+      `<strong class="message ${getCurrentUserClass(message.userId)}">
+      ${message.userFullName || message.username || "Anonymous"}
+      </strong>: ${message.content}`
+    )
+  );
+};
+
+let getCurrentUserClass = (id) => {
+  let userId = $("#chat-user-id").val();
+  return userId === id ? "current-user" : "";
 };

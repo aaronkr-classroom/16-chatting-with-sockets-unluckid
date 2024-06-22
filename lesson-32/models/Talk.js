@@ -8,6 +8,7 @@ const mongoose = require("mongoose"),
       title: {
         type: String,
         required: true,
+        default: 'Untitled' 
       },
       subtitle: {
         type: String,

@@ -1,3 +1,4 @@
+
 // public/js/modal.js
 "use strict";
 
@@ -13,39 +14,18 @@ $(document).ready(() => {
   const socket = io();
 
   $("#chat-form").submit(() => {
-    let text = $("#chat-input").val(); // Lesson 31.1 (p. 450)
-    let userId = $("#chat-user-id").val(); // Lesson 31.4 (p. 452)
-    let userFullName = $("#chat-user-full-name").val(); // Lesson 31.7 (p. 455)
-    let username = $("#chat-username").val();
-    socket.emit("message", {
-      content: text, // Lesson 31.1 (p. 450)
-      userId: userId, // Lesson 31.4 (p. 452)
-      fullName: userFullName, // Lesson 31.7 (p. 455)
-      username: username,
-    });
+    socket.emit("message");
     $("#chat-input").val("");
     return false;
   });
 
-  /**
-   * Listing 32.3 (p. 467)
-   * 메시지 수신 시 채팅 아이콘 애니메이팅
-   */
-
-  /**
-   * Listing 32.2 (p. 465)
-   * 사용자 접속이 끊겼을 때 메시지 출력
-   */
-
-  /**
-   * Listing 31.12 (p. 460)
-   * 최근 메시지 표시
-   */
-  socket.on("load all messages", (data) => {
-    data.forEach((message) => {
-      displayMessage(message);
-    });
+  socket.on("message", (message) => {
+    displayMessage(message.content);
   });
+
+  let displayMessage = (message) => {
+    $("#chat").prepend(`<li>${message}</li>`);
+  };
 
   $("#modal-button").click(() => {
     $(".modal-body").html("");
@@ -149,23 +129,4 @@ let addJoinButtonListener = () => {
       }
     );
   });
-};
-
-/**
- * Listing 31.6 (p. 454)
- * 채팅 폼으로부터 hidden field 값 끌어오기
- */
-let displayMessage = (message) => {
-  $("#chat").prepend(
-    $("<li>").html(
-      `<strong class="message ${getCurrentUserClass(message.userId)}">
-      ${message.userFullName || message.username || "Anonymous"}
-      </strong>: ${message.content}`
-    )
-  );
-};
-
-let getCurrentUserClass = (id) => {
-  let userId = $("#chat-user-id").val();
-  return userId === id ? "current-user" : "";
 };
